@@ -143,7 +143,7 @@ git switch -c demo/segredo-vazado
 echo "DATABASE_PASSWORD = \"$(openssl rand -base64 18)\"" > app/config_demo.py   # segredo FALSO gerado na hora
 git add . && git commit -m "demo: segredo vazado" && git push -u origin demo/segredo-vazado
 # → job Gitleaks falha (print da execução barrada)
-git reset --hard HEAD~1 && git push --force          # correção: remove o segredo do HISTÓRICO
+git reset --hard HEAD~1 && git push --force-with-lease   # correção: remove o segredo do HISTÓRICO
 # → pipeline verde (print da execução corrigida); depois apague a branch
 ```
 
