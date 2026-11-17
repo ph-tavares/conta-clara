@@ -1,0 +1,22 @@
+:root { --fg: #1a1a1a; --bg: #fff; --muted: #555; --accent: #0a6b4f; --warn-bg: #fff4d6; --bad: #a4161a; --ok: #1a7f37; }
+* { box-sizing: border-box; }
+body { margin: 0; font: 17px/1.5 system-ui, sans-serif; color: var(--fg); background: var(--bg); }
+header, main, footer, .aviso, .parceiro { max-width: 1000px; margin: 0 auto; padding: 0 16px; }
+header h1 { margin: 16px 0 0; color: var(--accent); }
+.aviso { background: var(--warn-bg); padding: 8px 16px; border-radius: 6px; }
+main { display: grid; gap: 8px 24px; grid-template-columns: 1fr; }
+@media (min-width: 860px) { main { grid-template-columns: 1fr 1fr; } }
+label { display: block; margin-top: 8px; font-weight: 600; }
+input, button, textarea { font: inherit; width: 100%; padding: 10px; margin-top: 4px; }
+button { background: var(--accent); color: #fff; border: 0; border-radius: 6px; cursor: pointer; margin-top: 10px; }
+button.sec { background: #e6f2ee; color: var(--accent); }
+button:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 3px solid #f5a623; }
+table { border-collapse: collapse; width: 100%; margin-top: 8px; }
+th, td { border-bottom: 1px solid #ddd; padding: 6px; text-align: left; }
+.destaque { font-size: 1.3em; font-weight: 700; }
+.ok { color: var(--ok); font-weight: 700; }
+.bad { color: var(--bad); font-weight: 700; }
+.erro { color: var(--bad); }
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.parceiro { margin-top: 24px; }
+footer { color: var(--muted); font-size: 14px; margin-top: 24px; padding-bottom: 24px; }

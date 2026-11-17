@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Conta Clara</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>Conta Clara</h1>
+  <p>Anote o número do seu medidor de luz, saiba quanto a conta deve dar e confira se a distribuidora cobrou certo.</p>
+</header>
+<p class="aviso" role="note">Não pedimos nome, CPF nem endereço. Sua casa é identificada só por um código que fica neste aparelho.
+  A <strong>casa de demonstração</strong> tem leituras fictícias. Tarifa e bandeira são valores de referência.</p>
+<main>
+  <section aria-labelledby="t-casa">
+    <h2 id="t-casa">1. Sua casa</h2>
+    <p id="status-casa">Nenhuma casa aberta neste aparelho.</p>
+    <button type="button" id="nova">Começar com uma casa nova</button>
+    <button type="button" id="demo" class="sec">Ver a casa de demonstração</button>
+    <details>
+      <summary>Já tenho um código</summary>
+      <label for="codigo">Código da casa</label>
+      <input id="codigo" autocomplete="off" maxlength="64">
+      <button type="button" id="abrir" class="sec">Abrir</button>
+    </details>
+  </section>
+
+  <section aria-labelledby="t-leitura">
+    <h2 id="t-leitura">2. Anotar leitura do medidor</h2>
+    <form id="form-leitura">
+      <label for="data">Data da leitura</label>
+      <input id="data" type="date" required>
+      <label for="kwh">Número no display do medidor (kWh)</label>
+      <input id="kwh" type="number" inputmode="numeric" min="0" max="999999" required>
+      <button type="submit">Salvar leitura</button>
+      <p id="msg-leitura" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <section aria-labelledby="t-resumo">
+    <h2 id="t-resumo">3. Seu consumo</h2>
+    <div id="resumo"><p>Anote ao menos 2 leituras em dias diferentes.</p></div>
+    <table>
+      <caption class="vh">Leituras anotadas</caption>
+      <thead><tr><th scope="col">Data</th><th scope="col">Medidor (kWh)</th></tr></thead>
+      <tbody id="leituras"></tbody>
+    </table>
+  </section>
+
+  <section aria-labelledby="t-conferir">
+    <h2 id="t-conferir">4. Conferir a conta que chegou</h2>
+    <form id="form-conferir">
+      <label for="cobrado">Consumo cobrado na conta (kWh)</label>
+      <input id="cobrado" type="number" inputmode="numeric" min="0" max="100000" required>
+      <label for="dias">Dias do período da conta</label>
+      <input id="dias" type="number" min="1" max="60" value="30" required>
+      <button type="submit">Conferir</button>
+    </form>
+    <div id="resultado" role="status" aria-live="polite"></div>
+  </section>
+</main>
+<details class="parceiro">
+  <summary>Área da organização parceira</summary>
+  <label for="token">Token de acesso</label>
+  <input id="token" type="password" autocomplete="off">
+  <button type="button" id="painel" class="sec">Ver painel</button>
+  <div id="saida-painel" role="status" aria-live="polite"></div>
+</details>
+<footer>Conta Clara · Global Solution FIAP 2026.2 (CitizenTech) · versão <span id="versao">—</span></footer>
+<script src="app.js"></script>
+</body>
+</html>
