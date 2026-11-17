@@ -182,7 +182,13 @@ Success! 3 passed, 0 failed.</pre>
 <figure><img src="evidencias/04-hcp-state.png" alt="state remoto"><figcaption>Figura 4: workspace <code>conta-clara</code> no HCP Terraform com o state e o histórico de versões (fora do Git).</figcaption></figure>
 
 <h3>3.3 Problemas reais no provisionamento</h3>
-<p class="pendente">PREENCHER: tabela Problema / Causa / Solução com o que realmente aconteceu durante o provisionamento e o deploy (ou uma frase dizendo que o provisionamento ocorreu sem incidentes).</p>
+<table>
+  <tr><th style="width:26%">Problema</th><th>Causa</th><th>Solução</th></tr>
+  <tr><td>Conta da faculdade sem nenhuma assinatura Azure</td><td>O acesso ao portal não cria assinatura; o benefício de estudante precisa ser ativado</td><td>Ativação da <em>Azure for Students</em> (verificação acadêmica e MFA). A assinatura apareceu como <em>Owner</em>, <em>Active</em>, alguns minutos depois</td></tr>
+  <tr><td>Provedor <code>Microsoft.Web</code> como <em>NotRegistered</em> numa assinatura nova</td><td>O provider <code>azurerm</code> está com <code>resource_provider_registrations = "none"</code>: o Terraform não registra provedores sozinho</td><td><code>az provider register -n Microsoft.Web --wait</code> uma vez, antes do <code>plan</code>; o passo foi acrescentado ao README</td></tr>
+  <tr><td>Política da assinatura limita regiões</td><td>A atribuição <em>Allowed resource deployment regions</em> só libera brazilsouth, southafricanorth, italynorth, spaincentral e canadacentral</td><td>Conferido antes do <code>plan</code>: <code>brazilsouth</code> (o padrão do código) está liberada, então os dados ficam no Brasil</td></tr>
+</table>
+<p>Com isso resolvido, o <code>plan</code> mostrou 9 recursos a criar, 0 a mudar e 0 a destruir, e o <code>apply</code> terminou numa única execução. A aplicação no Entra ID foi criada sem erro (o tenant permite <code>allowedToCreateApps</code>), e o login OIDC funcionou no primeiro deploy.</p>
 
 <h2 class="quebra">4. Pipeline DevSecOps (4,0)</h2>
 <p>Arquivo: <code>.github/workflows/devsecops.yml</code>. Roda em <strong>todo push</strong>, em qualquer branch.</p>
@@ -201,7 +207,7 @@ Success! 3 passed, 0 failed.</pre>
 <figure><img src="evidencias/07-deploy-log.png" alt="log do deploy"><figcaption>Figura 7: log do job <em>Deploy automático</em>: o App Service recebe a imagem <code>:SHA</code>, o <code>/health</code> confirma a versão no ar e o smoke test usa o token mascarado (<code>***</code>).</figcaption></figure>
 
 <h3>4.3 Execução barrada e corrigida</h3>
-<p>Numa branch descartável foi commitado um segredo falso (<code>DATABASE_PASSWORD = "..."</code>, gerado na hora), e o Gitleaks barrou o pipeline (<a class="pendente" href="#">PREENCHER: link da execução barrada</a>). Sem esse portão aprovado, a imagem não foi construída nem publicada. A correção foi remover o segredo <em>do histórico</em> com <code>git reset</code> + <code>push --force</code>, e não só apagar o arquivo, porque o Gitleaks varre todos os commits (<a class="pendente" href="#">PREENCHER: link da execução corrigida</a>). Num caso real, o segredo também seria rotacionado.</p>
+<p>Numa branch descartável foi commitado um segredo falso (<code>DATABASE_PASSWORD = "..."</code>, gerado na hora), e o Gitleaks barrou o pipeline (<a href="https://github.com/ph-tavares/conta-clara/actions/runs/44139723738">execução barrada #44139723738</a>). Sem esse portão aprovado, a imagem não foi construída nem publicada. A correção foi remover o segredo <em>do histórico</em> com <code>git reset</code> + <code>push --force-with-lease</code>, e não só apagar o arquivo, porque o Gitleaks varre todos os commits (<a href="https://github.com/ph-tavares/conta-clara/actions/runs/44139910911">execução corrigida #44139910911</a>). O <code>--force-with-lease</code> só reescreve a branch se ninguém mais tiver enviado commits a ela. Num caso real, o segredo também seria rotacionado. A branch descartável foi apagada depois; as execuções continuam no histórico do Actions.</p>
 <figure><img src="evidencias/08-pipeline-barrado.png" alt="execução barrada"><figcaption>Figura 8: execução barrada pelo Gitleaks (segredo falso detectado). A imagem e o deploy não rodaram.</figcaption></figure>
 <figure><img src="evidencias/09-pipeline-corrigido.png" alt="execução corrigida"><figcaption>Figura 9: mesma branch, execução corrigida com todos os portões verdes.</figcaption></figure>
 
@@ -221,10 +227,21 @@ Success! 3 passed, 0 failed.</pre>
   <tr><td>LatenciaP95Alta</td><td>p95 &gt; 1 s por 5 min</td><td>warning</td></tr>
   <tr><td>SaturacaoMemoria</td><td>&gt; 200 MB por 5 min</td><td>warning</td></tr>
 </table>
-<p><strong>Disparo do alerta com uma falha real:</strong> <span class="pendente">PREENCHER: data e linha do tempo real (horário de Brasília) de: app parado com <code>az webapp stop</code>, raspagem falhando, <code>ContaClaraFora</code> em firing, notificação push recebida, app religado com <code>az webapp start</code>, alerta resolvido.</span></p>
+<p><strong>Disparo do alerta com uma falha real</strong> (17/11/2026, horário de Brasília):</p>
+<table>
+  <tr><th style="width:14%">Hora</th><th>Evento</th></tr>
+  <tr><td>14:54:12</td><td>App parado com <code>az webapp stop -g rg-contaclara -n contaclara-gs</code></td></tr>
+  <tr><td>14:54:34</td><td>Raspagem falha (<code>HTTP 403 Forbidden</code>, app parado): <code>up = 0</code>, <code>ContaClaraFora</code> em <em>pending</em></td></tr>
+  <tr><td>14:55:44</td><td><code>ContaClaraFora</code> em <em>firing</em> (passou o <code>for: 1m</code>) e notificação push <em>firing</em> recebida no ntfy</td></tr>
+  <tr><td>14:58:16</td><td>App religado com <code>az webapp start</code></td></tr>
+  <tr><td>14:58:55</td><td><code>/health</code> volta a responder com a mesma versão (<code>c785c73</code>)</td></tr>
+  <tr><td>14:59:05</td><td>Alerta deixa de estar ativo no Prometheus</td></tr>
+  <tr><td>14:59:44</td><td>Notificação push <em>resolved</em> recebida no ntfy</td></tr>
+</table>
+<p>Do problema ao aviso no celular: 1 min 32 s. Da volta do app ao aviso de resolvido: 49 s.</p>
 <p><strong>Entrega do alerta:</strong> o Alertmanager envia uma notificação push pelo <a href="https://ntfy.sh">ntfy.sh</a>, sem conta nem servidor; o alerta chega no navegador ou no app do celular. A URL, com um tópico aleatório, fica em <code>monitoring/secrets/ntfy_url</code>, fora do Git. As mensagens levam só o nome do alerta, a severidade e o host público, nenhum dado pessoal. Não existe nenhum endpoint de "erro proposital" exposto em produção.</p>
 <figure><img src="evidencias/10-grafana-sinais-de-ouro.png" alt="dashboard"><figcaption>Figura 10: dashboard <em>Conta Clara - 4 sinais de ouro</em> no Grafana, alimentado pelo MVP publicado com uma carga leve gerada para a demonstração.</figcaption></figure>
-<figure><img src="evidencias/11-alerta-disparado.png" alt="alerta disparado"><figcaption>Figura 11: <code>ContaClaraFora</code> em <em>firing</em> no Prometheus durante a queda provocada (<code>up = 0</code>).</figcaption></figure>
+<figure><img src="evidencias/11-alerta-disparado.png" alt="alerta disparado"><figcaption>Figura 11: <code>ContaClaraFora</code> em <em>firing</em>, lido da API do Prometheus durante a queda provocada (<code>up = 0</code>, alvo <em>down</em> com 403 do app parado), e a linha do tempo registrada.</figcaption></figure>
 <figure><img src="evidencias/12-alerta-notificacao.png" alt="notificação do alerta"><figcaption>Figura 12: notificações push recebidas no ntfy: <em>firing</em> do <code>ContaClaraFora</code> durante a queda e <em>resolved</em> depois que o app voltou.</figcaption></figure>
 
 <h2 class="quebra">6. MVP publicado</h2>
@@ -257,7 +274,7 @@ Success! 3 passed, 0 failed.</pre>
 <p>Em trânsito, tudo passa por HTTPS (TLS 1.2+, certificado gerenciado pela Azure). Em repouso, o armazenamento do App Service é criptografado pela plataforma. Os dados ficam no Brasil, na região <code>brazilsouth</code>. O state do Terraform guarda os tokens da aplicação, mas nenhum dado de cidadão.</p>
 
 <h2>9. Estimativa de custo</h2>
-<p>Fonte: Azure Retail Prices API (preços públicos pay-as-you-go em USD, região <code>brazilsouth</code>), consultada em <span class="pendente">PREENCHER: data da consulta</span>. O mês considerado tem 730 h.</p>
+<p>Fonte: Azure Retail Prices API (preços públicos pay-as-you-go em USD, região <code>brazilsouth</code>), consultada em 17/11/2026 (item <em>Azure App Service Basic Plan - Linux</em>). O mês considerado tem 730 h.</p>
 <table>
   <tr><th>Recurso</th><th>Preço unitário</th><th class="n">USD/mês</th></tr>
   <tr><td>App Service Plan F1 (Linux)</td><td>US$ 0,00/h</td><td class="n">0,00</td></tr>
@@ -267,7 +284,7 @@ Success! 3 passed, 0 failed.</pre>
   <tr><td>GitHub Actions e GHCR (repositório público)</td><td>—</td><td class="n">0,00</td></tr>
   <tr><td>Prometheus/Grafana/Alertmanager (local)</td><td>—</td><td class="n">0,00</td></tr>
   <tr><th colspan="2">Total do piloto</th><th class="n">0,00</th></tr>
-  <tr><td>Próximo degrau: App Service Plan B1 (Linux), com Always On e sem cota diária de CPU</td><td><span class="pendente">PREENCHER: US$/h do B1</span></td><td class="n"><span class="pendente">PREENCHER</span></td></tr>
+  <tr><td>Próximo degrau: App Service Plan B1 (Linux), com Always On e sem cota diária de CPU</td><td>US$ 0,02/h</td><td class="n">14,60</td></tr>
 </table>
 <p>O piloto cabe inteiro em planos gratuitos. Para sair do piloto, o próximo passo é o B1 e, com mais de uma instância, um banco gerenciado no lugar do SQLite (não orçado aqui: fica fora do piloto para manter o custo em zero).</p>
 
