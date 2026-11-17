@@ -1,0 +1,37 @@
+# Stack local do Conta Clara (API + proxy HTTPS). Em producao a MESMA imagem roda no Azure App Service.
+# docker-compose.override.yml adiciona o build a partir do codigo.
+name: conta-clara
+
+services:
+  api:
+    image: ${API_IMAGE:?defina API_IMAGE no .env}
+    environment:
+      DATABASE_PATH: /data/contaclara.db
+      ADMIN_TOKEN: ${ADMIN_TOKEN:?defina ADMIN_TOKEN no .env}
+      METRICS_TOKEN: ${METRICS_TOKEN:?defina METRICS_TOKEN no .env}
+    volumes:
+      - dados:/data # unico ponto gravavel: o arquivo do banco
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    mem_limit: 256m
+    restart: unless-stopped
+
+  proxy:
+    # SITE_ADDRESS = dominio publico -> Caddy emite certificado HTTPS (Let's Encrypt) sozinho
+    image: caddy:2-alpine
+    command: caddy reverse-proxy --from ${SITE_ADDRESS:-:80} --to api:8000
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on: [api]
+    restart: unless-stopped
+
+volumes:
+  dados:
+  caddy_data:
+  caddy_config:
