@@ -67,7 +67,7 @@ flowchart LR
   tf[(tfstate no HCP Terraform)] --- Azure
 ```
 
-**Por que App Service e não VM:** a assinatura usada (*Azure para Estudantes Starter*) só permite `Microsoft.Web`, `Microsoft.Sql` e provedores de gestão; VM, rede virtual e Storage Account são recusados (`DisallowedProvider`). O F1 é gratuito, roda o mesmo container e entrega HTTPS e patches do host pela plataforma.
+**Por que App Service e não VM:** a assinatura usada é a *Azure for Students*, com política que só libera cinco regiões (entre elas `brazilsouth`). Uma VM consumiria crédito e exigiria patch do SO e uma porta SSH a proteger. O F1 é gratuito, roda o mesmo container e entrega HTTPS e patches do host pela plataforma.
 
 ## Como rodar localmente
 
@@ -91,6 +91,7 @@ Pré-requisitos: [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure
 
 ```bash
 az login
+az provider register -n Microsoft.Web --wait   # uma vez por assinatura
 export TF_CLOUD_ORGANIZATION="<sua organizacao>" TF_WORKSPACE="conta-clara"   # token: terraform login
 cd infra/terraform
 cp terraform.tfvars.example terraform.tfvars # preencha: subscription_id, admin_cidr (seu IP /32), api_image e github_repo

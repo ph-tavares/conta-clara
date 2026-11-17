@@ -149,7 +149,7 @@
   </g>
 </svg>
 <p><strong>Fluxo:</strong> cada <code>git push</code> passa por 5 portões (testes, Gitleaks, Semgrep, Trivy IaC e Trivy imagem). Só a imagem aprovada na <code>main</code> é publicada no GHCR (tags <code>:sha</code> e <code>:latest</code>). O job <code>deploy</code> faz login na Azure por OIDC, com um token de curta duração e sem senha guardada. Em seguida, aponta o App Service para a imagem <code>:sha</code> do commit e só passa quando <code>/health</code> responde com esse SHA.</p>
-<p><strong>Por que PaaS (App Service) e não VM:</strong> a assinatura usada é a <em>Azure para Estudantes Starter</em>. Ela só permite os provedores <code>Microsoft.Web</code>, <code>Microsoft.Sql</code> e alguns de gestão; VM, rede virtual e Storage Account são negados pela própria assinatura (<code>DisallowedProvider</code>). O plano F1 do App Service é gratuito, roda o mesmo container do <code>docker compose</code> local e entrega HTTPS e patches do host pela plataforma. Em troca: 60 min de CPU por dia, sem <em>Always On</em> e uma instância só (seção 10).</p>
+<p><strong>Por que PaaS (App Service) e não VM:</strong> a assinatura usada é a <em>Azure for Students</em> (US$ 100 de crédito), com uma política que só libera cinco regiões, entre elas <code>brazilsouth</code>. Uma VM consumiria crédito todo mês e deixaria com a equipe o patch do sistema operacional e uma porta SSH a proteger. O plano F1 do App Service é gratuito, roda o mesmo container do <code>docker compose</code> local e entrega HTTPS e patches do host pela plataforma. Em troca: 60 min de CPU por dia, sem <em>Always On</em> e uma instância só (seção 10).</p>
 
 <h2 class="quebra">3. Container e Infraestrutura como Código (5,0)</h2>
 <h3>3.1 Dockerfile enxuto, não-root, sem segredo e stack em docker compose</h3>
@@ -269,7 +269,7 @@ Success! 3 passed, 0 failed.</pre>
   <tr><th colspan="2">Total do piloto</th><th class="n">0,00</th></tr>
   <tr><td>Próximo degrau: App Service Plan B1 (Linux), com Always On e sem cota diária de CPU</td><td><span class="pendente">PREENCHER: US$/h do B1</span></td><td class="n"><span class="pendente">PREENCHER</span></td></tr>
 </table>
-<p>O piloto cabe inteiro em planos gratuitos. Para sair do piloto, o próximo passo é o B1 e, com mais de uma instância, um banco gerenciado no lugar do SQLite (não orçado aqui, porque não está disponível na assinatura Starter).</p>
+<p>O piloto cabe inteiro em planos gratuitos. Para sair do piloto, o próximo passo é o B1 e, com mais de uma instância, um banco gerenciado no lugar do SQLite (não orçado aqui: fica fora do piloto para manter o custo em zero).</p>
 
 <h2>10. Riscos conhecidos e próximos passos</h2>
 <ul>
@@ -279,7 +279,7 @@ Success! 3 passed, 0 failed.</pre>
   <li><strong>Limites do F1:</strong> 60 min de CPU por dia e sem <em>Always On</em>. A primeira requisição depois de um período ocioso é lenta, e se a cota acabar o site para até o dia seguinte. O alerta <code>ContaClaraFora</code> cobre esse caso.</li>
   <li><strong>Monitoramento local:</strong> só alerta enquanto a máquina do administrador está ligada. Próximo passo: Application Insights / Azure Monitor ou Grafana Cloud.</li>
   <li><strong>Rate limiting:</strong> a criação de casas e leituras ainda não tem limite por IP. Próximo passo: limite na aplicação ou um gateway na frente do App Service.</li>
-  <li><strong>Segredos em app settings:</strong> a assinatura Starter não oferece Key Vault. Com uma assinatura completa, os tokens iriam para o Key Vault, lidos por <em>managed identity</em>.</li>
+  <li><strong>Segredos em app settings:</strong> o Key Vault ficou fora do piloto para manter a infraestrutura mínima. Próximo passo: os tokens irem para o Key Vault, lidos por <em>managed identity</em>.</li>
   <li><strong>Tarifa de referência:</strong> o valor da tarifa e da bandeira é configurável e fixo no piloto; o componente de Big Data passa a alimentá-los com os dados abertos da ANEEL.</li>
 </ul>
 

@@ -13,7 +13,7 @@ from fastapi.staticfiles import StaticFiles
 from prometheus_client import CONTENT_TYPE_LATEST, Counter, Gauge, Histogram, generate_latest
 from pydantic import BaseModel, Field
 
-# shortcut: SQLite num unico arquivo (a assinatura Azure Starter nao oferece banco gerenciado); trocar por banco gerenciado se houver mais de 1 instancia
+# shortcut: SQLite num unico arquivo (piloto de custo zero, sem banco gerenciado); trocar por banco gerenciado se houver mais de 1 instancia
 DATABASE_PATH = os.getenv("DATABASE_PATH", "/data/contaclara.db")
 ADMIN_TOKEN = os.environ["ADMIN_TOKEN"]
 METRICS_TOKEN = os.environ["METRICS_TOKEN"]

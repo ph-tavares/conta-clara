@@ -13,7 +13,7 @@ terraform {
 provider "azurerm" {
   features {}
   subscription_id = var.subscription_id
-  # Assinatura Starter recusa registrar provedores; Microsoft.Web (unico usado) ja vem registrado
+  # O Terraform nao registra provedores: Microsoft.Web (unico usado) e registrado uma vez com az provider register
   resource_provider_registrations = "none"
 }
 
@@ -41,7 +41,7 @@ resource "azurerm_resource_group" "rg" {
   tags     = local.tags
 }
 
-# Plano F1 (gratuito). A assinatura Azure para Estudantes Starter so permite App Service (Microsoft.Web).
+# Plano F1 (gratuito): o piloto nao consome o credito da assinatura Azure for Students.
 resource "azurerm_service_plan" "plano" {
   name                = "plan-${local.nome}"
   location            = azurerm_resource_group.rg.location
