@@ -1,0 +1,7 @@
+# Copie para terraform.tfvars (ignorado pelo git) e preencha.
+subscription_id = "00000000-0000-0000-0000-000000000000"      # az account show --query id -o tsv
+admin_cidr      = "200.100.50.25/32"                          # seu IP publico: curl -s -4 ifconfig.me
+api_image       = "seu-login/conta-clara"                     # GHCR, em minusculas
+github_repo     = "seu-login@12345678/conta-clara@987654321" # gh api repos/<login>/conta-clara --jq '"\(.owner.login)@\(.owner.id)/\(.name)@\(.id)"'
+# app_name    = "contaclara-gs"  # vira <app_name>.azurewebsites.net (nome global; troque se ja existir)
+# location    = "brazilsouth"
