@@ -99,3 +99,13 @@ def test_cabecalhos_de_seguranca():
         h = c.get("/").headers
         assert "default-src 'self'" in h["content-security-policy"]
         assert h["x-content-type-options"] == "nosniff"
+
+
+def test_painel_de_dados_da_ouro():
+    with TestClient(app) as c:
+        r = c.get("/api/dados/painel")
+        assert r.status_code == 200
+        painel = r.json()
+        assert painel["tabela_origem"] == "workspace.conta_clara.ouro_painel_bairro"
+        for bairro in painel["bairros"]:
+            assert not {"id_familia", "nome_responsavel", "telefone"} & set(bairro)

@@ -1,0 +1,82 @@
+{
+ "tabela_origem": "workspace.conta_clara.ouro_painel_bairro",
+ "gerado_em": "2026-11-17T23:16:33Z",
+ "data_referencia": "2026-11-16",
+ "demonstracao": true,
+ "referencia_tarifaria": {
+  "distribuidora": "ELETROPAULO (Enel SP)",
+  "resolucao": "RESOLUÇÃO HOMOLOGATÓRIA Nº 3.596, DE 3 DE JULHO DE 2026",
+  "inicio_vigencia": "2026-07-04",
+  "tarifa_residencial_rs_kwh": 0.78938,
+  "tarifa_baixa_renda_rs_kwh": 0.62309,
+  "bandeira": "Verde",
+  "adicional_bandeira_rs_kwh": 0
+ },
+ "fontes": [
+  "Leituras e contas das famílias (demonstração)",
+  "ANEEL dados abertos",
+  "Open-Meteo (CC BY 4.0)"
+ ],
+ "bairros": [
+  {
+   "bairro": "Campo Limpo",
+   "familias": 14,
+   "familias_tarifa_social": 10,
+   "leituras": 87,
+   "consumo_medio_diario_kwh": 6.43,
+   "conta_media_estimada_30d_rs": 152.39,
+   "familias_consumo_acima_do_habitual": 0,
+   "contas_informadas": 4,
+   "contas_conferidas": 4,
+   "contas_divergentes": 1,
+   "contas_por_media": 2,
+   "kwh_cobrados_a_mais": 100.2,
+   "valor_a_contestar_rs": 62.43
+  },
+  {
+   "bairro": "Capão Redondo",
+   "familias": 11,
+   "familias_tarifa_social": 7,
+   "leituras": 54,
+   "consumo_medio_diario_kwh": 4.94,
+   "conta_media_estimada_30d_rs": 116.87,
+   "familias_consumo_acima_do_habitual": 0,
+   "contas_informadas": 5,
+   "contas_conferidas": 5,
+   "contas_divergentes": 1,
+   "contas_por_media": 0,
+   "kwh_cobrados_a_mais": 63,
+   "valor_a_contestar_rs": 39.25
+  },
+  {
+   "bairro": "Grajaú",
+   "familias": 15,
+   "familias_tarifa_social": 6,
+   "leituras": 80,
+   "consumo_medio_diario_kwh": 7.25,
+   "conta_media_estimada_30d_rs": 171.8,
+   "familias_consumo_acima_do_habitual": 0,
+   "contas_informadas": 9,
+   "contas_conferidas": 9,
+   "contas_divergentes": 4,
+   "contas_por_media": 2,
+   "kwh_cobrados_a_mais": 412,
+   "valor_a_contestar_rs": 312.45
+  },
+  {
+   "bairro": "Jardim Ângela",
+   "familias": 12,
+   "familias_tarifa_social": 6,
+   "leituras": 53,
+   "consumo_medio_diario_kwh": 6.43,
+   "conta_media_estimada_30d_rs": 152.37,
+   "familias_consumo_acima_do_habitual": 1,
+   "contas_informadas": 7,
+   "contas_conferidas": 7,
+   "contas_divergentes": 5,
+   "contas_por_media": 4,
+   "kwh_cobrados_a_mais": 211.8,
+   "valor_a_contestar_rs": 154.85
+  }
+ ]
+}
