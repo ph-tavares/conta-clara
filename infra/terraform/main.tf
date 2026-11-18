@@ -107,7 +107,12 @@ resource "azurerm_linux_web_app" "app" {
 
   lifecycle {
     # O pipeline troca a tag (:<sha>) a cada deploy aprovado; o Terraform nao deve reverter.
-    ignore_changes = [site_config[0].application_stack[0].docker_image_name]
+    # TARIFA_KWH e BANDEIRA sao publicadas todo mes pelo robo de RPA (conta-clara-rpa); o Terraform nao deve apagar.
+    ignore_changes = [
+      site_config[0].application_stack[0].docker_image_name,
+      app_settings["TARIFA_KWH"],
+      app_settings["BANDEIRA"],
+    ]
   }
 }
 
