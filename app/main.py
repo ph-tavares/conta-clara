@@ -1,6 +1,7 @@
 """Conta Clara - API do MVP (leituras do medidor de luz, estimativa e conferencia da conta)."""
 import hashlib
 import hmac
+import json
 import os
 import secrets
 import sqlite3
@@ -25,6 +26,8 @@ BANDEIRA = os.getenv("BANDEIRA", "amarela")
 ADICIONAL_BANDEIRA = {"verde": 0.0, "amarela": 1.885, "vermelha1": 4.463, "vermelha2": 7.877}  # R$ por 100 kWh
 LIMITE_DIVERGENCIA = float(os.getenv("LIMITE_DIVERGENCIA", "0.15"))  # 15% entre o cobrado e o medido
 CODIGO_DEMO = "demonstracao"
+# Tabela Ouro exportada pelo componente de Dados (workspace.conta_clara.ouro_painel_bairro): so agregados por bairro
+PAINEL_DADOS = os.getenv("PAINEL_DADOS", os.path.join(os.path.dirname(__file__), "dados", "ouro_painel_bairro.json"))
 
 
 class NovaLeitura(BaseModel):
@@ -207,6 +210,16 @@ def config():
             "adicional_bandeira_100kwh": ADICIONAL_BANDEIRA.get(BANDEIRA, 0.0),
             "limite_divergencia": LIMITE_DIVERGENCIA,
             "aviso": "Valores de referência para o piloto; confira a tarifa da sua distribuidora."}
+
+
+@app.get("/api/dados/painel")
+def painel_dados():
+    """Situacao dos bairros do piloto, vinda da camada Ouro do lakehouse (sem dado pessoal)."""
+    try:
+        with open(PAINEL_DADOS, encoding="utf-8") as arquivo:
+            return json.load(arquivo)
+    except (OSError, ValueError):
+        raise HTTPException(status_code=404, detail="painel de dados ainda nao publicado")
 
 
 @app.post("/api/casas", status_code=201)

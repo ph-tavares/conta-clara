@@ -1,7 +1,7 @@
 :root { --fg: #1a1a1a; --bg: #fff; --muted: #555; --accent: #0a6b4f; --warn-bg: #fff4d6; --bad: #a4161a; --ok: #1a7f37; }
 * { box-sizing: border-box; }
 body { margin: 0; font: 17px/1.5 system-ui, sans-serif; color: var(--fg); background: var(--bg); }
-header, main, footer, .aviso, .parceiro { max-width: 1000px; margin: 0 auto; padding: 0 16px; }
+header, main, footer, .aviso, .parceiro, .piloto { max-width: 1000px; margin: 0 auto; padding: 0 16px; }
 header h1 { margin: 16px 0 0; color: var(--accent); }
 .aviso { background: var(--warn-bg); padding: 8px 16px; border-radius: 6px; }
 main { display: grid; gap: 8px 24px; grid-template-columns: 1fr; }
@@ -20,3 +20,7 @@ th, td { border-bottom: 1px solid #ddd; padding: 6px; text-align: left; }
 .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 .parceiro { margin-top: 24px; }
 footer { color: var(--muted); font-size: 14px; margin-top: 24px; padding-bottom: 24px; }
+.piloto { margin-top: 24px; }
+.rolagem { overflow-x: auto; }
+.piloto td:not(:first-child), .piloto th:not(:first-child) { text-align: right; }
+.fonte { color: var(--muted); font-size: 14px; }

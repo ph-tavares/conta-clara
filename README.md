@@ -42,9 +42,14 @@ Global Solution FIAP 2026.2 (CitizenTech), 4ES. Este repositório traz o MVP e a
 | `POST /api/leituras` | anota uma leitura; recusa número menor que o de um dia anterior |
 | `POST /api/conferir` | compara a conta com o medidor e gera a contestação se divergir |
 | `GET /api/config` | tarifa, bandeira e limite de referência |
+| `GET /api/dados/painel` | situação de cada bairro do piloto, vinda da camada Ouro (`workspace.conta_clara.ouro_painel_bairro`), só agregados |
 | `GET /api/admin/painel` | painel agregado da organização parceira (token Bearer; sem token → 401) |
 | `GET /health` | status e versão publicada |
 | `GET /metrics` | métricas Prometheus (token Bearer) |
+
+## Dados do pipeline (componente Big Data)
+
+A seção **Como estão as famílias do piloto** da página lê `GET /api/dados/painel`, que serve `app/dados/ouro_painel_bairro.json`. Esse arquivo é exportado pelo notebook `05_exportar_para_mvp` do repositório [conta-clara-dados](https://github.com/ph-tavares/conta-clara-dados) a partir da tabela Ouro `ouro_painel_bairro` (totais por bairro, sem dado pessoal), no formato do contrato `contrato/ouro_painel_bairro.schema.json` daquele repositório.
 
 ## Arquitetura
 

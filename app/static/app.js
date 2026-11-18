@@ -97,6 +97,36 @@ $("painel").onclick = async () => {
   } catch (e) { out.textContent = "Não foi possível abrir o painel: " + e.message; }
 };
 
+async function carregarPiloto() {
+  try {
+    const r = await fetch("/api/dados/painel");
+    if (!r.ok) throw new Error("sem dados");
+    const p = await r.json();
+    const ref = p.referencia_tarifaria;
+    const num = (v, casas = 1) => v == null ? "—" : v.toLocaleString("pt-BR", { maximumFractionDigits: casas });
+    $("piloto-ref").textContent =
+      `Dados até ${new Date(p.data_referencia + "T12:00").toLocaleDateString("pt-BR")}. ` +
+      `Tarifa residencial ${ref.distribuidora}: R$ ${num(ref.tarifa_residencial_rs_kwh, 3)}/kWh sem impostos; ` +
+      `bandeira ${ref.bandeira}` + (p.demonstracao ? ". Leituras e contas de demonstração." : ".");
+    $("piloto").replaceChildren(...p.bairros.map((b) => {
+      const tr = document.createElement("tr");
+      const valores = [b.bairro, b.familias, num(b.consumo_medio_diario_kwh),
+        b.conta_media_estimada_30d_rs == null ? "—" : brl(b.conta_media_estimada_30d_rs),
+        b.familias_consumo_acima_do_habitual, b.contas_conferidas, b.contas_divergentes, brl(b.valor_a_contestar_rs)];
+      valores.forEach((v, i) => {
+        const td = document.createElement(i === 0 ? "th" : "td");
+        if (i === 0) td.scope = "row";
+        td.textContent = v; tr.append(td);
+      });
+      return tr;
+    }));
+    $("piloto-fonte").textContent = `Fonte: ${p.tabela_origem} (${p.fontes.join(", ")}). Só totais por bairro, sem dado pessoal.`;
+  } catch (_) {
+    $("piloto-ref").textContent = "Painel do piloto ainda não publicado.";
+  }
+}
+
+carregarPiloto();
 const hoje = new Date(); hoje.setMinutes(hoje.getMinutes() - hoje.getTimezoneOffset()); // data local, nao UTC
 $("data").value = hoje.toISOString().slice(0, 10);
 fetch("/api/config").then((r) => r.json()).then((c) => { $("versao").textContent = String(c.version).slice(0, 7); }).catch(() => {});
